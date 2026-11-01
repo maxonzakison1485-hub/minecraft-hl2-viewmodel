@@ -9,6 +9,7 @@
   "entrypoints": {
     "client": ["com.maxonzakison1485.hl2viewmodel.HL2ViewmodelClient"]
   },
+  "mixins": ["hl2_viewmodel.client.mixins.json"],
   "depends": {
     "fabricloader": ">=0.19.5",
     "minecraft": "26.3",
