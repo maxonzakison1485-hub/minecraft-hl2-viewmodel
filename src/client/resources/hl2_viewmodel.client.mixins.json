@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "com.maxonzakison1485.hl2viewmodel.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "ItemInHandRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
