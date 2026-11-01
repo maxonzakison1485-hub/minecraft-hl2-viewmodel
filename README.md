@@ -1,24 +1,29 @@
 # HL2 Viewmodel
 
-A client-side Fabric mod for Minecraft 26.3, aiming to make the first-person held-item viewmodel move with the weight and inertia of Half-Life 2.
+Client-side Fabric mod for Minecraft 26.3. The goal is Half-Life 2-style first-person item weight, sway and inertia.
 
-## Current state
+## Current implementation
 
-- Fabric 26.3 project scaffold and client entrypoint.
-- `ViewmodelMotion`: a damped spring model for camera-turn inertia / sway.
-- The motion model is not yet connected to Minecraft's held-item renderer; this is the next implementation step.
+- Fabric client entrypoint and build configuration.
+- Damped spring state for camera-turn inertia.
+- A client mixin wraps vanilla `ItemInHandRenderer.submitHandsWithItems` with an additive pose transform. Vanilla hand/item drawing is not replaced.
+- GitHub Actions builds the mod and uploads the JAR as an artifact.
+
+This is an early implementation. It needs an actual game launch and visual tuning; a successful compile alone does not prove renderer compatibility.
+
+## Shader compatibility goal
+
+The mod changes the first-person pose stack only. It does not call OpenGL, replace a shader, or modify a shader pipeline. That is the intended low-conflict approach for Vitrail (OptiFine-format packs translated for Minecraft's Vulkan renderer) and Sulkan (its own native Vulkan shader pipeline). Compatibility still needs in-game testing against the exact Minecraft, Sodium, Vitrail/Sulkan, and shader-pack versions. If a renderer changes or bypasses the vanilla hand-submission method, the mixin may need a backend-specific adjustment.
 
 ## Build
 
-Requirements: JDK 25 and Gradle 9.6 or newer. Fabric currently recommends Loom 1.19-SNAPSHOT and Loader 0.19.5 for Minecraft 26.3; see the [Fabric version page](https://fabricmc.net/develop/).
-
-From the repository root, run:
+Requirements: JDK 25 and Gradle 9.6 or newer. Fabric's Minecraft 26.3 versions are listed at [Fabric Develop](https://fabricmc.net/develop/).
 
 ```bash
 gradle build
 ```
 
-The mod JAR will be in `build/libs/`.
+The JAR is produced in `build/libs/`. GitHub Actions also runs this build on pushes and pull requests.
 
 ## Development
 
