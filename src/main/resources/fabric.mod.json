@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "hl2_viewmodel",
+  "version": "${version}",
+  "name": "HL2 Viewmodel",
+  "description": "Adds Half-Life 2 inspired motion to the first-person item viewmodel.",
+  "authors": ["maxonzakison1485-hub"],
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.maxonzakison1485.hl2viewmodel.HL2ViewmodelClient"]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
