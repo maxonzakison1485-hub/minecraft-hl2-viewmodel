@@ -3,6 +3,7 @@ package com.maxonzakison1485.hl2viewmodel.mixin;
 import com.maxonzakison1485.hl2viewmodel.ViewmodelMotion;
 import com.mojang.blaze3d.vertex.PoseStack;
 import org.joml.Matrix4f;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.FirstPersonHandsAndItemsRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.level.FirstPersonHandsAndItemsRenderState;
@@ -35,10 +36,15 @@ public abstract class FirstPersonHandsAndItemsRendererMixin {
         float dp = hl2vm$hasPrevious ? pitch - hl2vm$lastPitch : 0f;
         hl2vm$lastYaw = yaw; hl2vm$lastPitch = pitch; hl2vm$hasPrevious = true;
 
-        float speed = Math.min(1f, Math.abs(playerState.walkAnimationSpeed));
-        float phase = playerState.walkAnimationPos;
-        boolean grounded = !playerState.isFallFlying && !playerState.isVisuallySwimming;
-        hl2vm$motion.tick(dy, dp, speed, phase, grounded, dt);
+        var player = Minecraft.getInstance().player;
+        float speed = 0f;
+        boolean grounded = false;
+        if (player != null) {
+            var velocity = player.getDeltaMovement();
+            speed = Math.min(1f, (float)Math.sqrt(velocity.x * velocity.x + velocity.z * velocity.z) * 4f);
+            grounded = player.onGround();
+        }
+        hl2vm$motion.tick(dy, dp, speed, 0f, grounded, dt);
     }
 
     @Inject(method = "submitArmWithItem", at = @At("HEAD"))
