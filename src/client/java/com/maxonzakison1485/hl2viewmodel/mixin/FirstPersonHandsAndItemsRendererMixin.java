@@ -3,7 +3,7 @@ package com.maxonzakison1485.hl2viewmodel.mixin;
 import com.maxonzakison1485.hl2viewmodel.HL2ViewmodelClient;
 import com.maxonzakison1485.hl2viewmodel.ViewmodelMotion;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
+import org.joml.Matrix4f;
 import net.minecraft.client.renderer.FirstPersonHandsAndItemsRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.level.FirstPersonHandsAndItemsRenderState;
@@ -48,9 +48,10 @@ public abstract class FirstPersonHandsAndItemsRendererMixin {
             SubmitNodeCollector collector, int lightCoords, CallbackInfo ci) {
         poseStack.pushPose();
         poseStack.translate(hl2vm$motion.getX(), hl2vm$motion.getY(), hl2vm$motion.getZ());
-        poseStack.mulPose(Axis.XP.rotationDegrees(hl2vm$motion.getPitch()));
-        poseStack.mulPose(Axis.YP.rotationDegrees(hl2vm$motion.getYaw()));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(hl2vm$motion.getRoll()));
+        poseStack.mulPose(new Matrix4f()
+                .rotateX((float) Math.toRadians(hl2vm$motion.getPitch()))
+                .rotateY((float) Math.toRadians(hl2vm$motion.getYaw()))
+                .rotateZ((float) Math.toRadians(hl2vm$motion.getRoll())));
     }
 
     @Inject(method = "submitArmWithItem", at = @At("RETURN"))
