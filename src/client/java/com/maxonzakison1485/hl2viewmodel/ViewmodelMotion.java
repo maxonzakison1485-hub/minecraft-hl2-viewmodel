@@ -1,60 +1,36 @@
 package com.maxonzakison1485.hl2viewmodel;
 
-/** Spring-driven HL2-inspired inertia and independent first-person walk bob. */
+/** Direct HL2-style viewmodel lag and walk bob. */
 public final class ViewmodelMotion {
-    private static final float FREQUENCY = 15.5f;
-    private final Spring x = new Spring(), y = new Spring(), z = new Spring();
-    private final Spring pitch = new Spring(), yaw = new Spring(), roll = new Spring();
+    private float x, y, z;
     private float phase;
 
     public void tick(float deltaYaw, float deltaPitch, float walkSpeed,
             float walkPhase, boolean grounded, float dt) {
-        dt = clamp(dt, 0.001f, 0.1f);
-        walkSpeed = clamp(walkSpeed, 0.0f, 1.0f);
-        float yawRate = clamp(deltaYaw / dt, -650.0f, 650.0f);
-        float pitchRate = clamp(deltaPitch / dt, -650.0f, 650.0f);
+        walkSpeed = clamp(walkSpeed, 0f, 1f);
+        // Source CalcViewModelLag: angle delta directly offsets the viewmodel.
+        x = clamp(-deltaYaw * 0.0018f, -0.09f, 0.09f);
+        z = clamp(deltaPitch * 0.0018f, -0.07f, 0.07f);
 
-        float move = grounded ? walkSpeed : 0.0f;
-        phase += move * dt * 12.0f;
-        // Own subdued HL2-like walk cycle; it fades smoothly as movement stops.
-        float bob = move * move;
-        float bobY = (float)Math.sin(phase * 2.0f) * 0.024f * bob;
-        float bobZ = (float)Math.cos(phase) * 0.014f * bob;
-        float targetX = clamp(-yawRate * 0.00024f, -0.12f, 0.12f);
-        float targetY = clamp(pitchRate * 0.00018f + bobY, -0.10f, 0.10f);
-        float targetZ = -0.018f * move + bobZ;
-        float targetPitch = clamp(-pitchRate * 0.012f - move * 1.1f, -8f, 8f);
-        float targetYaw = clamp(-yawRate * 0.010f, -7f, 7f);
-        float targetRoll = clamp(-yawRate * 0.018f, -10f, 10f);
-
-        x.update(targetX, dt); y.update(targetY, dt); z.update(targetZ, dt);
-        pitch.update(targetPitch, dt); yaw.update(targetYaw, dt); roll.update(targetRoll, dt);
+        float speed = grounded ? walkSpeed : 0f;
+        phase += speed * Math.max(0f, dt) * 12f;
+        // HL2 bob: vertical sine and forward/back cosine.
+        z += (float)Math.sin(phase * 2f) * 0.025f * speed;
+        y = (float)Math.cos(phase) * 0.018f * speed;
     }
 
-    public float getX(){ return x.position; }
-    public float getY(){ return y.position; }
-    public float getZ(){ return z.position; }
-    public float getPitch(){ return pitch.position; }
-    public float getYaw(){ return yaw.position; }
-    public float getRoll(){ return roll.position; }
+    public float getX() { return x; }
+    public float getY() { return y; }
+    public float getZ() { return z; }
+    public float getPitch() { return 0f; }
+    public float getYaw() { return 0f; }
+    public float getRoll() { return 0f; }
 
     public void reset() {
-        x.reset(); y.reset(); z.reset(); pitch.reset(); yaw.reset(); roll.reset();
-        phase = 0f;
+        x = y = z = phase = 0f;
     }
 
-    private static float clamp(float v,float min,float max) {
-        return Float.isFinite(v) ? Math.max(min,Math.min(max,v)) : 0f;
-    }
-
-    private static final class Spring {
-        float position, velocity;
-        void update(float target,float dt) {
-            float omega=FREQUENCY, d=position-target;
-            float j=velocity+omega*d, decay=(float)Math.exp(-omega*dt);
-            position=target+(d+j*dt)*decay;
-            velocity=(velocity-omega*j*dt)*decay;
-        }
-        void reset(){position=velocity=0f;}
+    private static float clamp(float value, float min, float max) {
+        return Float.isFinite(value) ? Math.max(min, Math.min(max, value)) : 0f;
     }
 }
