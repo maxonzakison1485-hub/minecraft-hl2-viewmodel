@@ -14,10 +14,8 @@ public final class ViewmodelMotion {
         float yawRate = clamp(deltaYaw / dt, -650.0f, 650.0f);
         float pitchRate = clamp(deltaPitch / dt, -650.0f, 650.0f);
 
-        if (grounded && walkSpeed > 0.025f) {
-            phase = walkPhase;
-        }
         float move = grounded ? walkSpeed : 0.0f;
+        phase += move * dt * 12.0f;
         // Own subdued HL2-like walk cycle; it fades smoothly as movement stops.
         float bob = move * move;
         float bobY = (float)Math.sin(phase * 2.0f) * 0.024f * bob;
