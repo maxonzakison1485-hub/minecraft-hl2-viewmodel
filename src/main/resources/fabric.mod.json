@@ -18,5 +18,8 @@
     "minecraft": "26.3",
     "java": ">=25",
     "fabric-api": "*"
-  }
+  },
+  "mixins": [
+    "hl2_viewmodel.mixins.json"
+  ]
 }
