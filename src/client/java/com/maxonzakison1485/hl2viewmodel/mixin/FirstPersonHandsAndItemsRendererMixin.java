@@ -54,8 +54,6 @@ public abstract class FirstPersonHandsAndItemsRendererMixin {
             float inverseArmHeight, PoseStack poseStack,
             SubmitNodeCollector collector, int lightCoords, CallbackInfo ci) {
         poseStack.pushPose();
-        // Cancel the renderer's supplied camera-bob offsets for the hands/items only.
-        poseStack.translate(-state.xBob, -state.yBob, 0.0f);
         poseStack.translate(hl2vm$motion.getX(), hl2vm$motion.getY(), hl2vm$motion.getZ());
         poseStack.mulPose(new Matrix4f()
                 .rotateX((float)Math.toRadians(hl2vm$motion.getPitch()))
